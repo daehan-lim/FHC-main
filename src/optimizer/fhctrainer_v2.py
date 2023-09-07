@@ -68,6 +68,7 @@ class RHSCTrainerV2(BaseTrainer):
 
             abnormal_idx_list = y.type(torch.bool)
             normal_X = X[~abnormal_idx_list]
+            #print(normal_X)
             encoded = net(normal_X)
 
             n_samples += encoded.shape[0]
@@ -196,7 +197,7 @@ class RHSCTrainerV2(BaseTrainer):
 
         return z_adv_sampled
 
-    def load_pretrained_model(self, ae, net):
+    def load_pretrained_mode(self, ae, net):
         encoder_state = ae.encoder.rnn_layer.state_dict()
         net.encoder.rnn_layer.load_state_dict(encoder_state)
 

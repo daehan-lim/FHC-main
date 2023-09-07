@@ -11,8 +11,9 @@ from .base_ae import Encoder
 from .rnn_ae import HSCRNNEncoder
 from torch import nn
 from base import BaseNet
-from .mnist_LeNet import MNIST_LeNet
+from .mnist_LeNet import MNIST_LeNet, MNIST_LeNet_Autoencoder
 from .cifar10_LeNet import CIFAR10_LeNet
+from .pendigits import pendigits
 from .cnn_lstm import C_LSTM
 
 
@@ -21,7 +22,6 @@ class SVDD(BaseNet):
         super(SVDD, self).__init__()
 
         self.rep_dim = hidden_dims[-1]
-
         if rep_model_type == 'SimpleEncoder':
             self.encoder = Encoder(in_dim=in_dim, hidden_dims=hidden_dims)
         elif rep_model_type == 'RNNEncoder':
@@ -29,6 +29,11 @@ class SVDD(BaseNet):
         elif rep_model_type == 'mnist':
             # print('mnistencoder')
             self.encoder = MNIST_LeNet()
+            #self.encoder = MNIST_LeNet_Autoencoder()
+
+        elif rep_model_type == 'pendigits':
+            self.encoder = pendigits()
+
         elif rep_model_type == 'cifar10':
             # print('cifar10')
             self.encoder = CIFAR10_LeNet()
@@ -39,7 +44,9 @@ class SVDD(BaseNet):
         self.c = torch.zeros(self.rep_dim)
         # self.R = None
 
+        # support vector data description (SVDD outlier detection model)
         svdd_layer = []
+        #print(hidden_dims[-1])
         for i in range(num_svdd_layer):
             svdd_layer.append(nn.Linear(hidden_dims[-1], hidden_dims[-1]))
             svdd_layer.append(nn.BatchNorm1d(hidden_dims[-1]))

@@ -153,6 +153,11 @@ class ImageDatasetModule(object):
         print(f"Set random seed : {random_seed}")
 
         class_comb = list(combinations(id_targets, num_id_target_per_client))
+        #
+        # print(id_targets) ## flag
+        # print(num_id_target_per_client)
+        # print(class_comb)
+        # print(len(class_comb)) # classes per client
         num_ood_clients = math.ceil(len(id_targets)/num_id_target_per_client)
 
         abnormal_client_class_idx_list = list()
@@ -356,7 +361,6 @@ class ImageDatasetModule(object):
                 client_data[cli]['test_y'] = total_test_y[cli * round(len(total_test_y) / num_clients):]
 
         # Set class information
-        print(results)
         for idx, data_dict in client_data.items():
             data_dict["class_index_list"] = results[idx]
 
@@ -368,11 +372,12 @@ class ImageDatasetModule(object):
             test_data_list=test_data_list,
             test_label_list=test_label_list
         )
-
+        # print(self.data_dict)
         return self.data_dict
 
     def convert_dataset(self, data_dict, client_idx):
         client_data_dict = data_dict["client_data_dict"][client_idx]
+        #print(client_data_dict)
 
         train_X = client_data_dict["train_X"]
         train_y = client_data_dict["train_y"]
@@ -455,13 +460,13 @@ class ImageDatasetModule(object):
         mean_list = normalization_variables_dict["means"]
         std_list = normalization_variables_dict["stds"]
 
-        print(f"Normalization variables are NOT exist")
+        #print(f"Normalization variables are NOT exist")
 
         self.normalization_variables = [[mean for mean in mean_list], [std for std in std_list]]
 
-        print(f"Complete to set normalization variables :\n"
-              f" > Mean : {mean_list}\n"
-              f" > Std : {std_list}")
+        # print(f"Complete to set normalization variables :\n"
+        #       f" > Mean : {mean_list}\n"
+        #       f" > Std : {std_list}")
 
 
 class MNISTDatasetModule(ImageDatasetModule):

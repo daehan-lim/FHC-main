@@ -342,6 +342,7 @@ class RHSCFedTraining(ABC):
 
             if best_auc < auc_mean:
                 best_auc = auc_mean
+                self.loger.info(f"best auc: {best_auc}")
                 shutil.copy(self.get_save_path(rnd, self.file_name),
                             f'../model_save/best_models/{best_file}_bestauc.pt')
 
@@ -715,7 +716,8 @@ if __name__ == '__main__':
 
     if model_type == 'mnist' or model_type == 'cifar10':
         datamodule.prepare_data()
-        data_dict = datamodule.setup()
+
+        data_dict = datamodule.setup() # [0, 2], [3, 4], [5, 6], [7, 8], [8 ....
 
         trainset = []
         validset = []
@@ -739,9 +741,16 @@ if __name__ == '__main__':
             trainset.append(train_dataset)
             validset.append(val_dataset)
 
+        # len(trainset)
+        # exit(0)
         total_test_dataset = datamodule.convert_total_dataset(
             data_dict=data_dict
         )
+    elif model_type == 'pendigits':
+        print("dummy")
+
+
+
     else:
         data_file = '../data/add/data/ton/ton_iot_data_dict_v8.pickle'
         res = load_data(data_file)
@@ -753,7 +762,6 @@ if __name__ == '__main__':
 
         trainset = []
         validset = []
-
         for client in range(res['num_clients']):
             train_set = TensorDataset(torch.from_numpy(data_dict[client]['train_X']).float(),
                                       torch.from_numpy(data_dict[client]['train_y']).int())
@@ -767,6 +775,7 @@ if __name__ == '__main__':
 
     abnormal_client_list = np.array([0 if i > abnormal_clients - 1 else 1 for i in range(num_clients)])
 
+    # print("debugging -- exit before fit")
     fl_trainer = RHSCFedTraining(loger,
                                  num_clients=num_clients,
                                  num_abnormal_clients=abnormal_clients,
