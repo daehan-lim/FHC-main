@@ -323,4 +323,4 @@ cython_debug/
 code/
 MNIST/
 model_save/
-mnist5_*
+*.pt
